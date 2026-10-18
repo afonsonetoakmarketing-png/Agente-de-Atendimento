@@ -1,0 +1,6 @@
+{
+  "summary": "Plano arquitetural e de implementação para: (1) Painel de Persona, Tom de Voz, Regras de Atendimento e Máquina de Estados no módulo Agente de IA, (2) Integração real de Function Calling Gemini (qualify_lead, update_kanban_stage, schedule_followup, request_human_handover) + Executor, (3) Módulo de Mensageria Evolution API Cluster (/lib/evolution.ts, /app/api/whatsapp/route.ts, /app/api/webhooks/evolution/route.ts), (4) Prisma Schema Multi-Tenant e BullMQ Scheduler, e (5) Motor Interativo de Prospecção (Google Maps/Redes) + Central de Blueprint Arquitetural dos 5 Pilares.",
+  "updatedAt": "2026-10-18T00:00:59.310488692Z",
+  "requestFeedback": true,
+  "userFacing": true
+}

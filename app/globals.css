@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+@theme {
+  --color-on-secondary-fixed: #251a00;
+  --color-on-primary: #472a00;
+  --color-on-error-container: #ffdad6;
+  --color-primary-fixed: #ffddb8;
+  --color-on-primary-fixed-variant: #653e00;
+  --color-secondary: #ffca45;
+  --color-surface-container: #1f1f22;
+  --color-on-surface-variant: #d8c3ad;
+  --color-surface-dim: #131316;
+  --color-secondary-container: #e4ae00;
+  --color-tertiary: #ffc08e;
+  --color-outline-variant: #534434;
+  --color-secondary-fixed-dim: #f7be1d;
+  --color-on-tertiary-fixed-variant: #6e3900;
+  --color-on-primary-container: #613b00;
+  --color-secondary-fixed: #ffdf9a;
+  --color-surface-tint: #ffb95f;
+  --color-error: #ffb4ab;
+  --color-surface-container-low: #1b1b1e;
+  --color-surface-variant: #353438;
+  --color-surface-bright: #39393c;
+  --color-surface-container-high: #2a2a2d;
+  --color-on-tertiary-fixed: #2f1500;
+  --color-on-secondary-container: #5b4400;
+  --color-inverse-primary: #855300;
+  --color-error-container: #93000a;
+  --color-primary: #ffc174;
+  --color-primary-container: #f59e0b;
+  --color-tertiary-fixed-dim: #ffb77d;
+  --color-inverse-on-surface: #303033;
+  --color-on-secondary: #3f2e00;
+  --color-surface-container-lowest: #0e0e11;
+  --color-background: #131316;
+  --color-on-secondary-fixed-variant: #5a4300;
+  --color-on-background: #e4e1e6;
+  --color-on-primary-fixed: #2a1700;
+  --color-inverse-surface: #e4e1e6;
+  --color-tertiary-fixed: #ffdcc3;
+  --color-outline: #a08e7a;
+  --color-surface: #131316;
+  --color-primary-fixed-dim: #ffb95f;
+  --color-surface-container-highest: #353438;
+  --color-tertiary-container: #ff9837;
+  --color-on-tertiary-container: #6a3700;
+  --color-on-error: #690005;
+  --color-on-surface: #e4e1e6;
+  --color-on-tertiary: #4d2600;
+
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 1rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-space-xl: 2.5rem;
+
+  --font-display: var(--font-space-grotesk), sans-serif;
+  --font-sans: var(--font-plus-jakarta), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+}
+
+@layer utilities {
+  .font-headline-xl {
+    font-family: var(--font-space-grotesk), sans-serif;
+    font-size: 36px;
+    line-height: 44px;
+    letter-spacing: -0.025em;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .font-headline-lg {
+    font-family: var(--font-space-grotesk), sans-serif;
+    font-size: 28px;
+    line-height: 36px;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+  .font-headline-sm {
+    font-family: var(--font-space-grotesk), sans-serif;
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: -0.015em;
+    font-weight: 500;
+  }
+  .font-title-md {
+    font-family: var(--font-plus-jakarta), sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+  }
+  .font-body-lg {
+    font-family: var(--font-plus-jakarta), sans-serif;
+    font-size: 16px;
+    line-height: 26px;
+    font-weight: 400;
+  }
+  .font-body-md {
+    font-family: var(--font-plus-jakarta), sans-serif;
+    font-size: 14px;
+    line-height: 22px;
+    font-weight: 400;
+  }
+  .font-body-sm {
+    font-family: var(--font-plus-jakarta), sans-serif;
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: 0.01em;
+    font-weight: 400;
+  }
+  .font-metric-counter {
+    font-family: var(--font-jetbrains-mono), monospace;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -0.04em;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .font-label-code {
+    font-family: var(--font-jetbrains-mono), monospace;
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: -0.01em;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .font-telemetry-tag {
+    font-family: var(--font-jetbrains-mono), monospace;
+    font-size: 11px;
+    line-height: 14px;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .thin-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-track {
+    background: rgba(19, 19, 22, 0.4);
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(160, 142, 122, 0.3);
+    border-radius: 9999px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(245, 158, 11, 0.6);
+  }
+}
+

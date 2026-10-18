@@ -1,0 +1,160 @@
+/// prisma/schema.prisma
+// Modelagem de Banco de Dados Multi-Tenant (AUREUS OS / Aetheris AI)
+// Suporta Evolution API Cluster, Funil Não-Linear (Máquina de Estados),
+// Function Calling Auditável e Filas de Follow-up (BullMQ)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum WhatsappConnectionStatus {
+  CONNECTED
+  DISCONNECTED
+  QR_CODE_READY
+}
+
+enum LeadTemperature {
+  COLD
+  WARM
+  HOT
+}
+
+enum KanbanDynamicStage {
+  PROSPECTING
+  QUALIFIED
+  NURTURING
+  FOLLOWUP
+  PROPOSAL
+  NEGOTIATION
+  CLOSING
+  CLOSED_WON
+  CLOSED_LOST
+  COLD_FRIDGE // Geladeira / Remarketing Passivo
+}
+
+enum AttendanceControlMode {
+  AI_AUTONOMOUS
+  HUMAN_HANDOVER
+}
+
+model Tenant {
+  id                     String                   @id @default(cuid())
+  name                   String
+  slug                   String                   @unique
+  niche                  String                   @default("B2B SaaS & High-Ticket")
+
+  // Credenciais e Sessão da Evolution API Cluster
+  evolutionInstanceName  String?                  @unique
+  evolutionInstanceToken String?
+  whatsappStatus         WhatsappConnectionStatus @default(DISCONNECTED)
+  whatsappPhoneConnected String?
+
+  // Configurações Cognitivas da IA (Persona, Tom de Voz e Prompt Mestre)
+  aiAgentName            String                   @default("Aetheris Closer IA")
+  aiPersonaArchetype     String                   @default("closer_consultivo_spin")
+  aiVoiceTone            String                   @default("Consultivo, empático, focado em diagnóstico SPIN e fechamento natural no WhatsApp")
+  aiSystemPrompt         String                   @db.Text
+  aiTemperature          Float                    @default(0.3)
+  ragKnowledgeContext    Json?                    // Documentos vetorizados / Playbook do nicho do Tenant
+  agentLinks             Json?                    // proposalUrl, checkoutUrl, calendarUrl, websiteUrl
+
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+
+  leads                  Lead[]
+  messages               Message[]
+  timelineEvents         TimelineEvent[]
+  scheduledJobs          ScheduledFollowupJob[]
+
+  @@index([evolutionInstanceName])
+}
+
+model Lead {
+  id                String                @id @default(cuid())
+  tenantId          String
+  tenant            Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  name              String
+  company           String?
+  phone             String                // Ex: 5511988224411
+  whatsappRemoteJid String                // Ex: 5511988224411@s.whatsapp.net
+  email             String?
+
+  // Inteligência Cognitiva & Funil Não-Linear
+  leadScore         Int                   @default(50) // 0 a 100 atualizado via Tool qualify_lead
+  temperature       LeadTemperature       @default(WARM)
+  buyingIntent      String?               @db.Text
+  scoreReasoning    String?               @db.Text
+  dynamicStage      KanbanDynamicStage    @default(PROSPECTING)
+  pipelineType      String                @default("prospeccao_outbound") // prospeccao_outbound | trafego_inbound
+  controlMode       AttendanceControlMode @default(AI_AUTONOMOUS)
+
+  estimatedValue    Decimal               @default(0.0) @db.Decimal(12, 2)
+  lastInteraction   DateTime              @default(now())
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  messages          Message[]
+  timelineEvents    TimelineEvent[]
+  scheduledJobs     ScheduledFollowupJob[]
+
+  @@unique([tenantId, whatsappRemoteJid])
+  @@index([tenantId, dynamicStage])
+  @@index([tenantId, temperature])
+}
+
+model Message {
+  id                String   @id @default(cuid())
+  tenantId          String
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  leadId            String
+  lead              Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  whatsappMessageId String?  @unique // ID nativo do WhatsApp na Evolution API (para recibos de leitura)
+  fromMe            Boolean  @default(false)
+  senderRole        String   @default("LEAD") // LEAD | AI_AGENT | HUMAN_OPERATOR
+  content           String   @db.Text
+  sentimentDetected String?
+  createdAt         DateTime @default(now())
+
+  @@index([leadId, createdAt])
+}
+
+model TimelineEvent {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  leadId      String
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  eventType   String   // TOOL_QUALIFY_LEAD | TOOL_STAGE_CHANGE | TOOL_FOLLOWUP_SCHEDULED | TOOL_HUMAN_HANDOVER
+  actor       String   @default("GEMINI_COGNITIVE_ENGINE")
+  title       String
+  description String   @db.Text
+  metadata    Json?    // Payload imutável dos argumentos enviados pela IA na Tool Call
+  createdAt   DateTime @default(now())
+
+  @@index([leadId, createdAt])
+}
+
+model ScheduledFollowupJob {
+  id             String   @id @default(cuid())
+  tenantId       String
+  tenant         Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  leadId         String
+  lead           Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  bullMqJobId    String   @unique
+  delayInHours   Int
+  followupIntent String   @db.Text
+  scheduledFor   DateTime
+  status         String   @default("PENDING") // PENDING | EXECUTED | CANCELLED_BY_REPLY
+  createdAt      DateTime @default(now())
+
+  @@index([tenantId, status, scheduledFor])
+}

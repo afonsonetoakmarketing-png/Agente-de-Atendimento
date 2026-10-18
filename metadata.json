@@ -1,0 +1,6 @@
+{
+  "name": "Aetheris AI • Agent Core",
+  "description": "Ecossistema corporativo de agentes virtuais autônomos, atendimento omnichannel (WhatsApp, Instagram e Webchat) e CRM com funil inteligente.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
